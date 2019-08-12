@@ -560,7 +560,9 @@ class ArticleContentResource extends Resource
                     '@type'=>'ImageObject',
                     'url'=> asset("images/diy-logo.png")
                 ]
-            )
+            ),
+            'step'=>$this->getStepsWithCrawl(),
+            'totalTime'=>$this->articleTotalName(),
         ];
 
         if(!empty($this->resource['article']['content']['lead_image'])){
@@ -594,5 +596,29 @@ class ArticleContentResource extends Resource
     protected function getLevelDifficulty(){
         return (isset($this->resource['article']['content']['level_difficulty']['value']) and !empty($this->resource['article']['content']['level_difficulty']['value']))?
             $this->resource['article']['content']['level_difficulty']['value']:'';
+    }
+
+    /**
+     * Crawl steps from content. this is the plan B for short term
+     * @param string $content
+     */
+    public function getStepsWithCrawl(){
+        $steps=array();
+        $dom = new DOMDocument();
+        $dom->loadHTML($this->getArticleContent());
+        foreach ($dom->getElementsByTagName('h4') as $tag) {
+            if (!empty($tag->nodeValue)){
+                $title=$tag->nodeValue;
+                $description=$tag->nextSibling->nextSibling->nodeValue;
+                array_push($steps,array(
+                    '@type'=>'HowToStep',
+                    'name'=>$title,
+                    'text'=>$description,
+                    'url'=>$this->articleUrl
+                ));
+            }
+        }
+        return $steps;
+//        var_dump($steps);
     }
 }
