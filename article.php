@@ -8,6 +8,7 @@ use App\Sequoia\Requests\SolrMoreLikeThisRequest;
 use DOMDocument;
 use Illuminate\Http\Resources\Json\Resource;
 use Illuminate\Support\Carbon;
+use phpDocumentor\Reflection\Types\Array_;
 
 class ArticleContentResource extends Resource
 {
@@ -48,6 +49,7 @@ class ArticleContentResource extends Resource
      */
     public function toArray($request)
     {
+//        var_dump($this->getStepsWithCrawl());die();
         return [
             'articleTitle' => $this->resource['article']['title'],
             'articleUrl' => $this->getArticleUrl(),
@@ -541,7 +543,8 @@ class ArticleContentResource extends Resource
     protected function getStructureData(){
         $articleStructureData = [
             '@context'=>'https://schema.org',
-            '@type'=>'Article',
+            '@type'=>'HowTo',
+            'name' => $this->resource['article']['title'],
             'mainEntityOfPage'=>[
                 '@type'=>'WebPage',
                 '@id'=>$this->getArticleUrl()
@@ -557,7 +560,9 @@ class ArticleContentResource extends Resource
                     '@type'=>'ImageObject',
                     'url'=> asset("images/diy-logo.png")
                 ]
-            )
+            ),
+            'step'=>$this->getStepsWithCrawl(),
+            'totalTime'=>$this->articleTotalName(),
         ];
 
         if(!empty($this->resource['article']['content']['lead_image'])){
@@ -576,5 +581,29 @@ class ArticleContentResource extends Resource
 
     protected function hasModernizeScript(){
         return in_array($this->resource['article']['article_id'],config('modernize.articles'));
+    }
+
+    /**
+     * Crawl steps from content. this is the plan B for short term
+     * @param string $content
+     */
+    public function getStepsWithCrawl(){
+        $steps=array();
+        $dom = new DOMDocument();
+        $dom->loadHTML($this->getArticleContent());
+        foreach ($dom->getElementsByTagName('h4') as $tag) {
+            if (!empty($tag->nodeValue)){
+                $title=$tag->nodeValue;
+                $description=$tag->nextSibling->nextSibling->nodeValue;
+                array_push($steps,array(
+                    '@type'=>'HowToStep',
+                    'name'=>$title,
+                    'text'=>$description,
+                    'url'=>$this->articleUrl
+                ));
+            }
+        }
+        return $steps;
+//        var_dump($steps);
     }
 }
