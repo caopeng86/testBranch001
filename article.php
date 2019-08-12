@@ -625,7 +625,12 @@ class ArticleContentResource extends Resource
     public function feature001(){
         //TODO
     }
+    public function feature002(){
+        //Todo
+    }
     public function feature003(){
         //Todo
     }
+
+
 }
