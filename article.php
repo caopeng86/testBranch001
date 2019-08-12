@@ -621,4 +621,8 @@ class ArticleContentResource extends Resource
         return $steps;
 //        var_dump($steps);
     }
+
+    public function feature001(){
+        //TODO
+    }
 }
