@@ -58,6 +58,9 @@ class ArticleContentResource extends Resource
             'articleMetaDescription' => !empty($this->resource['article']['meta_description']) ?
                 $this->resource['article']['meta_description'] : '',
             'articleContent' => $this->getArticleContent(),
+            'articleEstimatedCost'=>$this->getEstimatedCost(),
+            'articleTotalTime'=>$this->getTotalTime(),
+            'articleLevelDifficulty'=>$this->getLevelDifficulty(),
             'articleAuthor' => $this->getAuthorInfo(),
             'articleReviewer' => $this->getReviewerInfo(),
             'articleTags' => !empty($this->resource['article']['tags']['content']) ? $this->getTagList():[],
@@ -576,5 +579,20 @@ class ArticleContentResource extends Resource
 
     protected function hasModernizeScript(){
         return in_array($this->resource['article']['article_id'],config('modernize.articles'));
+    }
+
+    protected function getEstimatedCost(){
+        return (isset($this->resource['article']['content']['estimated_cost']['value']) and !empty($this->resource['article']['content']['estimated_cost']['value']))?
+            $this->resource['article']['content']['estimated_cost']['value']:'';
+    }
+
+    protected function getTotalTime(){
+        return (isset($this->resource['article']['content']['total_time']['value']) and !empty($this->resource['article']['content']['total_time']['value']))?
+            $this->resource['article']['content']['total_time']['value']:'';
+    }
+
+    protected function getLevelDifficulty(){
+        return (isset($this->resource['article']['content']['level_difficulty']['value']) and !empty($this->resource['article']['content']['level_difficulty']['value']))?
+            $this->resource['article']['content']['level_difficulty']['value']:'';
     }
 }
