@@ -634,6 +634,7 @@ class ArticleContentResource extends Resource
     }
     public function featureNewCommit03(){
         //Todo
+        echo "commit03";
     }
 
 
