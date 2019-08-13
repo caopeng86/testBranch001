@@ -7,3 +7,4 @@
  */
 
 echo "feature002-1";
+echo "feature002-2";
