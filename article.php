@@ -657,5 +657,4 @@ class ArticleContentResource extends Resource
         echo "commit04-04";
     }
 
-
 }
